@@ -20,15 +20,17 @@ let holdTime = 0;
 let appliedForce = 0;
 
 let marker = 0;
-
 let dis2dbtn = document.querySelector('#dis2d');
 let indentbtn = document.querySelector('#indent');
 let dis3btn = document.querySelector("#display3d");
 let formulabtn = document.querySelector('#formula');
 let tableobs = document.querySelector('.parameter-block');
+let crackdiv= document.querySelector('.crack');
+let topviewbtn = document.querySelector('#topviewbtn');
+let topindentbtn = document.querySelector('#topindentbtn');
 tableobs.style.display ='none';
 
-let btnarray = [dis2dbtn, indentbtn, dis3btn, formulabtn];
+let btnarray = [dis2dbtn, indentbtn, topviewbtn ,topindentbtn,dis3btn,formulabtn ,];
 btnarray.forEach(el => el.style.display = 'none');
 
 let heading = document.getElementById('heading');
@@ -67,6 +69,11 @@ function display2d() {
         </g>
       </svg>
     </div>
+    <div class=crack>
+    <h1>This is Top-view</h1>
+    <div class="img">
+       <img id="frameImg" src="./frame/F9.png" alt="image">
+    </div>
   `;
 
   // Tooltip logic stays
@@ -82,6 +89,10 @@ function display2d() {
       img.addEventListener("mouseleave", () => infoBox.style.display = "none");
     });
   }, 50);
+  setTimeout(() => {
+  document.querySelector('.crack').style.display = 'none';
+}, 0);
+
 }
 
 // ---------------------------------------------
@@ -154,6 +165,11 @@ function display3d() {
           </g>
         </svg>
       </div>
+          <div class=crack>
+    <h1>This is Top-view</h1>
+    <div class="img">
+       <img id="frameImg" src="./frame/F1.png" alt="image">
+    </div>
     `;
   }, 1500);
 
@@ -241,6 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
 function movedown() {
   const pointer = document.querySelector(".pointer");
   if (!pointer) return;
@@ -266,7 +283,7 @@ function movedown() {
 
     }, holdTime * 1000); // ⏳ HOLD HERE
 
-  }, 1800);
+  }, 1500);
 }
 
 
@@ -303,9 +320,61 @@ function autoMovePointerUp() {
     console.log("Material image changed after unloading.");
   }, 1200);
 }
+function crack() {
+  const crackdiv = document.querySelector('.crack');
+  if (!crackdiv) {
+    console.error("Run 2D view first");
+    return;
+  }
+  setTimeout(() => {
+      btnarray[marker].style.display='block';
+      marker++;
+  }, 2000);
+  crackdiv.style.display = 'block';
+   // ✅ image exists now
+}
 
 
+// 🔁 Frame images (same folder)
+// Frames in order (one-time play)
+const frames = [
+  "./frame/F9.png",
+  "./frame/F8.png",
+  "./frame/F7.png",
+  "./frame/F6.png",
+  "./frame/F5.png",
+  "./frame/F4.png",
+  "./frame/F3.png",
+  "./frame/F2.png",
+  "./frame/F1.png"
+];
 
+// Speed control (FAST but visible)
+const frameSpeed = 400; // ms per frame (~0.05s)
 
+function startFrameAnimationOnce() {
+  const img = document.getElementById("frameImg");
+  if (!img) return;
 
+  let index = 0;
 
+  // 🔥 Preload images (NO flicker)
+  frames.forEach(src => {
+    const i = new Image();
+    i.src = src;
+  });
+
+  const interval = setInterval(() => {
+    img.src = frames[index];
+    index++;
+
+    // 🛑 STOP at last frame
+    if (index >= frames.length) {
+      clearInterval(interval);
+    }
+  }, frameSpeed);
+    setTimeout(() => {
+      btnarray[marker].style.display='block';
+      marker++;
+  }, 2000);
+}

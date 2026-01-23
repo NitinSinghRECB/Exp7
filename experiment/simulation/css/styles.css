@@ -586,22 +586,47 @@ top: 5%;
     opacity: 1;
   }
 }
+/* this is the code for crrack */
 
 
+.crack{
+height: 70%;
+    width: 30%;
+    background: rgb(255, 255, 255);
+    position: relative;
+    margin: 5px;
+    padding: 5px;
+    left: 55%;
+    top: 12%;
+    border-radius: 10px;
+    border: 1px solid black;
+     /* display: none; */
+}
+
+.crack h1{
+  text-align: center;
+  font-size: 5px;
+  font-weight: 600;
+  border: 1px solid black;
+  color: rgb(0, 0, 0);
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+.crack .img{
+  height: 300px;
+  width: fit-content;
+  max-width: 500px;
+  max-height: 600px;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 5px;
+}
+.crack .img img{
+  width: 100%;
+  height: auto;
+  image-rendering: auto;
+  will-change: contents;
+}
 
 
 /* Startup Overlay */
@@ -804,36 +829,4 @@ top: 5%;
 sub {
   font-size: 70%;
   vertical-align: -0.3em;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#crack {
-  width: 300px;
-  height: 300px;
-  position: absolute;
-  right: 20px;
-  top: 100px;
-  border: 2px solid #444;
-  overflow: hidden;
-}
-#crack img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
 }

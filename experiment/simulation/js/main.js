@@ -1,4 +1,4 @@
-function openProcedure() {
+﻿function openProcedure() {
   document.getElementById("procedure").style.display = "flex";
 }
 
@@ -11,9 +11,11 @@ function resetExperiment() {
 }
 
 // ---------------------------------------------
-// VARIABLES (CLEANED — graph removed)
+// VARIABLES (CLEANED â€” graph removed)
 // ---------------------------------------------
 const CONTACT_Y = 60; 
+const POINTER_DOWN_MS = 1800;
+const POINTER_UP_MS = 1200;
 let pointerState = "up"; 
 let animPhase = "idle";
 let holdTime = 0;
@@ -96,49 +98,6 @@ function display2d() {
 }
 
 // ---------------------------------------------
-// POINTER DOWN — NO GRAPH
-// ---------------------------------------------
-function movedown() {
-  const pointer = document.querySelector(".pointer");
-  if (!pointer) return;
-
-  pointerState = "touching";
-
-  pointer.style.transition = "transform 2s linear";
-  pointer.style.transform = `translateY(${CONTACT_Y}px)`;
-
-  // After pointer reaches material
-  setTimeout(() => {
-    // Show next button
-    btnarray[marker].style.display = 'block';
-    marker++;
-
-  }, 2000);
-}
-
-// ---------------------------------------------
-// AUTO POINTER UP — NO GRAPH
-// ---------------------------------------------
-function autoMovePointerUp() {
-  const pointer = document.querySelector('.pointer');
-  if (!pointer) return;
-
-  btnarray[marker].style.display='block';
-  marker++;
-
-  pointer.style.transition = "transform 1s linear";
-  pointer.style.transform = "translateY(0px)";
-
-  // Change material image
-  const img = document.getElementById("baseimage");
-  if (img) {
-    const newSrc = "./base2-1.png";
-    img.setAttribute("href", newSrc);
-    img.setAttributeNS("http://www.w3.org/1999/xlink","xlink:href", newSrc);
-  }
-}
-
-// ---------------------------------------------
 // 3D VIEW
 // ---------------------------------------------
 function display3d() {
@@ -208,7 +167,7 @@ function validateInputs() {
   submitBtn.disabled = !(f >= 0.1 && f <= 10 && t >= 0);
 }
 
-// Submit — NO GRAPH TRIGGER
+// Submit â€” NO GRAPH TRIGGER
 function submitIndent() {
   holdTime = parseFloat(timeInput.value);
   appliedForce = parseFloat(forceInput.value);
@@ -265,13 +224,25 @@ function movedown() {
   pointerState = "touching";
 
   // Move pointer down to contact point
-  pointer.style.transition = "transform 1.8s linear";
+  pointer.style.transition = `transform ${POINTER_DOWN_MS / 1000}s linear`;
   pointer.style.transform = `translateY(${CONTACT_Y}px)`;
 
-  // After reaching bottom (1.8 sec)
+  // After reaching bottom
   setTimeout(() => {
 
     console.log("Pointer reached the surface. Starting hold...");
+
+    // Change material image AFTER pointer fully goes down
+    const img = document.getElementById("baseimage");
+    if (img) {
+      const newSrc = "./base2-1.png";
+      img.setAttribute("href", newSrc);
+      img.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", newSrc);
+    }
+
+    // Start crack frames when the indenter touches the sample
+    const crackDuration = holdTime > 0 ? holdTime * 1000 : undefined;
+    startFrameAnimationOnce({ durationMs: crackDuration, showNextButton: false });
 
     // HOLD FOR GIVEN holdTime
     setTimeout(() => {
@@ -281,9 +252,9 @@ function movedown() {
       // Now pointer goes up automatically
       autoMovePointerUp();
 
-    }, holdTime * 1000); // ⏳ HOLD HERE
+    }, holdTime * 1000); // â³ HOLD HERE
 
-  }, 1500);
+  }, POINTER_DOWN_MS);
 }
 
 
@@ -300,25 +271,18 @@ function autoMovePointerUp() {
   marker++;
 
   // Move pointer UP
-  pointer.style.transition = "transform 1.2s linear";
+  pointer.style.transition = `transform ${POINTER_UP_MS / 1000}s linear`;
   pointer.style.transform = "translateY(0px)";
 
-  // Change material image AFTER pointer fully goes up
+  // Keep crack image at the final frame AFTER pointer fully goes up
   setTimeout(() => {
-    const img = document.getElementById("baseimage");
-    if (img) {
-      const newSrc = "./base2-1.png";
-
-      img.setAttribute("href", newSrc);
-      img.setAttributeNS(
-        "http://www.w3.org/1999/xlink",
-        "xlink:href",
-        newSrc
-      );
+    const crackImg = document.getElementById("frameImg");
+    if (crackImg && frames.length > 0) {
+      crackImg.src = frames[frames.length - 1];
     }
 
-    console.log("Material image changed after unloading.");
-  }, 1200);
+    console.log("Pointer returned to start.");
+  }, POINTER_UP_MS);
 }
 function crack() {
   const crackdiv = document.querySelector('.crack');
@@ -331,50 +295,78 @@ function crack() {
       marker++;
   }, 2000);
   crackdiv.style.display = 'block';
-   // ✅ image exists now
+   // âœ… image exists now
 }
 
 
-// 🔁 Frame images (same folder)
+// ðŸ” Frame images (same folder)
 // Frames in order (one-time play)
 const frames = [
-  "./frame/F9.png",
-  "./frame/F8.png",
-  "./frame/F7.png",
-  "./frame/F6.png",
-  "./frame/F5.png",
-  "./frame/F4.png",
-  "./frame/F3.png",
-  "./frame/F2.png",
-  "./frame/F1.png"
+  "./frame/f1.png",
+  "./frame/f2.png",
+  "./frame/f3.png",
+  "./frame/f4.png",
+  "./frame/f5.png",
+  "./frame/f6.png",
+  "./frame/f7.png",
+  "./frame/f8.png",
+  "./frame/f9.png"
 ];
 
-// Speed control (FAST but visible)
-const frameSpeed = 400; // ms per frame (~0.05s)
+// Speed control (fallback when no duration is provided)
+const frameSpeed = 400; // ms per frame
+let frameTimer = null;
 
-function startFrameAnimationOnce() {
+function startFrameAnimationOnce(options = {}) {
   const img = document.getElementById("frameImg");
   if (!img) return;
 
-  let index = 0;
+  const { durationMs, showNextButton = true } = options;
 
-  // 🔥 Preload images (NO flicker)
+  const crackdiv = document.querySelector(".crack");
+  if (crackdiv) {
+    crackdiv.style.display = "block";
+  }
+
+  const totalDuration =
+    typeof durationMs === "number" && durationMs > 0
+      ? durationMs
+      : frames.length * frameSpeed;
+
+  const steps = Math.max(frames.length - 1, 1);
+  const intervalMs = Math.max(50, Math.floor(totalDuration / steps));
+
+  if (frameTimer) {
+    clearInterval(frameTimer);
+    frameTimer = null;
+  }
+
+  // Preload images (NO flicker)
   frames.forEach(src => {
     const i = new Image();
     i.src = src;
   });
 
-  const interval = setInterval(() => {
+  let index = 0;
+  img.src = frames[index];
+  index++;
+
+  frameTimer = setInterval(() => {
     img.src = frames[index];
     index++;
 
-    // 🛑 STOP at last frame
+    // STOP at last frame
     if (index >= frames.length) {
-      clearInterval(interval);
+      clearInterval(frameTimer);
+      frameTimer = null;
     }
-  }, frameSpeed);
+  }, intervalMs);
+
+  if (showNextButton) {
     setTimeout(() => {
-      btnarray[marker].style.display='block';
+      btnarray[marker].style.display = 'block';
       marker++;
-  }, 2000);
+    }, Math.max(totalDuration, 2000));
+  }
 }
+

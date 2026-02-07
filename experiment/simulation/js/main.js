@@ -24,15 +24,19 @@ let appliedForce = 0;
 let marker = 0;
 let dis2dbtn = document.querySelector('#dis2d');
 let indentbtn = document.querySelector('#indent');
-let dis3btn = document.querySelector("#display3d");
 let formulabtn = document.querySelector('#formula');
 let tableobs = document.querySelector('.parameter-block');
 let crackdiv= document.querySelector('.crack');
-let topviewbtn = document.querySelector('#topviewbtn');
-let topindentbtn = document.querySelector('#topindentbtn');
+let resultBtn = document.querySelector('#resultBtn');
+let conclusionBtn = document.querySelector('#conclusionBtn');
+
+resultBtn.style.display = "none";
+conclusionBtn.style.display = "none";
+
+
 tableobs.style.display ='none';
 
-let btnarray = [dis2dbtn, indentbtn, topviewbtn ,topindentbtn,dis3btn,formulabtn ,];
+let btnarray = [dis2dbtn, indentbtn,formulabtn ,];
 btnarray.forEach(el => el.style.display = 'none');
 
 let heading = document.getElementById('heading');
@@ -100,42 +104,42 @@ function display2d() {
 // ---------------------------------------------
 // 3D VIEW
 // ---------------------------------------------
-function display3d() {
-  heading.innerText = "3-Dimensional view";
+// function display3d() {
+//   heading.innerText = "3-Dimensional view";
 
-  svgContainer.style.transition = "1s ease all";
+//   svgContainer.style.transition = "1s ease all";
 
-  setTimeout(() => {
-    svgContainer.innerHTML = `
-      <div class="display3dview">
-        <svg viewBox="0 0 612 792" class="responsive-svg">
-          <g>
-            <image width="1591" height="1555"
-              transform="translate(115.1 276.7) scale(.2)"
-              xlink:href="nano indentation-1.png"/>
-            <image width="629" height="984"
-              transform="translate(201.4 172.9) scale(.2)"
-              data-text ="Material:metals, ceramics, polymers, composites, and biological tissues"
-              xlink:href="nano indentation-2.png"/>
-            <image width="469" height="1184"
-              transform="translate(196.5 181.9) scale(.2)"
-              data-text ="Material:metals, ceramics, polymers, composites, and biological tissues"
-              xlink:href="nano indentation-3.png"/>
-          </g>
-        </svg>
-      </div>
-          <div class=crack>
-    <h1>This is Top-view</h1>
-    <div class="img">
-       <img id="frameImg" src="./frame/f9.png" alt="image">
-    </div>
-    `;
-  }, 1000);
+//   setTimeout(() => {
+//     svgContainer.innerHTML = `
+//       <div class="display3dview">
+//         <svg viewBox="0 0 612 792" class="responsive-svg">
+//           <g>
+//             <image width="1591" height="1555"
+//               transform="translate(115.1 276.7) scale(.2)"
+//               xlink:href="nano indentation-1.png"/>
+//             <image width="629" height="984"
+//               transform="translate(201.4 172.9) scale(.2)"
+//               data-text ="Material:metals, ceramics, polymers, composites, and biological tissues"
+//               xlink:href="nano indentation-2.png"/>
+//             <image width="469" height="1184"
+//               transform="translate(196.5 181.9) scale(.2)"
+//               data-text ="Material:metals, ceramics, polymers, composites, and biological tissues"
+//               xlink:href="nano indentation-3.png"/>
+//           </g>
+//         </svg>
+//       </div>
+//           <div class=crack>
+//     <h1>This is Top-view</h1>
+//     <div class="img">
+//        <img id="frameImg" src="./frame/f9.png" alt="image">
+//     </div>
+//     `;
+//   }, 1000);
 
-  // Display next button
-  btnarray[marker].style.display='block';
-  marker++;
-}
+//   // Display next button
+//   btnarray[marker].style.display='block';
+//   marker++;
+// }
 
 // ---------------------------------------------
 // FORMULA POPUP
@@ -248,6 +252,8 @@ function movedown() {
     setTimeout(() => {
       console.log("Holding finished. Pointer going up...");
       autoMovePointerUp();
+      resultBtn.style.display = "block";
+      conclusionBtn.style.display = "block";
     }, holdTime * 1000);
 
   }, POINTER_DOWN_MS);
@@ -323,23 +329,24 @@ function autoMovePointerUp() {
     if (crackImg && frames.length > 0) {
       crackImg.src = frames[frames.length - 1];
     }
+    document.getElementById("measureCrackBtn").style.display = "block";
 
     console.log("Pointer returned to start.");
   }, POINTER_UP_MS);
 }
-function crack() {
-  const crackdiv = document.querySelector('.crack');
-  if (!crackdiv) {
-    console.error("Run 2D view first");
-    return;
-  }
-  setTimeout(() => {
-      btnarray[marker].style.display='block';
-      marker++;
-  }, 2000);
-  crackdiv.style.display = 'block';
-   // âœ… image exists now
-}
+// function crack() {
+//   const crackdiv = document.querySelector('.crack');
+//   if (!crackdiv) {
+//     console.error("Run 2D view first");
+//     return;
+//   }
+//   setTimeout(() => {
+//       btnarray[marker].style.display='block';
+//       marker++;
+//   }, 2000);
+//   crackdiv.style.display = 'block';
+//    // âœ… image exists now
+// }
 
 
 // ðŸ” Frame images (same folder)
@@ -413,3 +420,173 @@ function startFrameAnimationOnce(options = {}) {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function showMaterialOptions() {
+  document.getElementById("materialOptions").style.display = "block";
+
+  // hide indentation test button initially
+  document.getElementById("performIndentBtn").style.display = "none";
+
+  // reset radio
+  const mild = document.getElementById("mildRadio");
+  mild.checked = false;
+  mild.disabled = false;
+}
+
+function materialSelected() {
+  const mild = document.getElementById("mildRadio");
+
+  // disable after selection
+  mild.disabled = true;
+
+  // show next button
+  document.getElementById("performIndentBtn").style.display = "block";
+}
+
+function showIndentPanel() {
+  document.getElementById("indentPanel").style.display = "block";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let slideIndex = 0;
+
+function showResult() {
+  document.getElementById("resultModal").style.display = "flex";
+  showSlide(0);
+}
+
+function closeResult() {
+  document.getElementById("resultModal").style.display = "none";
+}
+
+function showSlide(n) {
+  const slides = document.querySelectorAll("#resultSlides .slide");
+  slides.forEach(s => s.classList.remove("active"));
+
+  slideIndex = Math.max(0, Math.min(n, slides.length - 1));
+  slides[slideIndex].classList.add("active");
+}
+
+function nextSlide() {
+  showSlide(slideIndex + 1);
+}
+
+function prevSlide() {
+  showSlide(slideIndex - 1);
+}
+
+
+// Conclusion popup
+function showConclusion() {
+  document.getElementById("conclusionModal").style.display = "flex";
+}
+
+function closeConclusion() {
+  document.getElementById("conclusionModal").style.display = "none";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -------------------------------
+// CRACK LENGTH SLIDES
+// -------------------------------
+let crackSlideIndex = 0;
+let crackTimer = null;
+
+// image sequence
+const crackImages = ["img1.png", "img2.png", "img3.png", "img4.png"];
+
+function openCrackMeasure() {
+  document.getElementById("crackMeasureModal").style.display = "flex";
+
+  // reset
+  crackSlideIndex = 0;
+  showCrackSlide(0);
+
+  const imgTag = document.getElementById("crackSeqImg");
+  const nextBtn = document.getElementById("crackImgNextBtn");
+
+  nextBtn.style.display = "none";
+
+  // play sequence
+  let i = 0;
+  imgTag.src = crackImages[i];
+
+  crackTimer = setInterval(() => {
+    i++;
+
+    if (i >= crackImages.length) {
+      clearInterval(crackTimer);
+      nextBtn.style.display = "inline-block"; // show Next button
+      return;
+    }
+
+    imgTag.src = crackImages[i];
+  }, 500);
+}
+
+function showCrackSlide(n) {
+  const slides = document.querySelectorAll("#crackSlides .slide");
+  slides.forEach(s => s.classList.remove("active"));
+
+  crackSlideIndex = Math.max(0, Math.min(n, slides.length - 1));
+  slides[crackSlideIndex].classList.add("active");
+}
+
+function openCrackTableSlide() {
+  showCrackSlide(1);
+}
+
+function closeCrackMeasure() {
+  document.getElementById("crackMeasureModal").style.display = "none";
+  clearInterval(crackTimer);
+}

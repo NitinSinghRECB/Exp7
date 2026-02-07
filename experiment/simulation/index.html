@@ -13,7 +13,7 @@
   <header class="header">
     <div>
       <h1>Fracture Toughness of Ceramics</h1>
-      <p>Material texting laboratory</p>
+      <p>Material Testing laboratory</p>
     </div>
     <div class="header-actions">
       <button class="procedure-btn" onclick="openProcedure()">Procedure</button>
@@ -45,9 +45,24 @@
     <aside class="controls">
       <h3>Control Panel</h3>
 
-      <button class="primary" id="textarea" onclick="textar()">
-        Perform Indentation Test
-      </button>
+     <!-- MATERIAL SELECTION -->
+<button class="primary" id="materialsBtn" onclick="showMaterialOptions()">
+  Materials
+</button>
+
+<div id="materialOptions" class="material-box" style="display:none;">
+  <h4>Select Material</h4>
+
+  <label class="mat-option">
+    <input type="radio" name="material" value="Mild Steel" id="mildRadio" onclick="materialSelected()">
+    Hafnium diboride (HfB₂)
+  </label>
+</div>
+
+<button class="primary" id="performIndentBtn" onclick="showIndentPanel()" style="display:none;">
+  Perform Vickers Indentation Test
+</button>
+
 
       <div id="indentPanel" class="indent-panel">
 
@@ -57,7 +72,7 @@
             <input type="number" id="forceInput" step="0.1" min="0.1" max="10">
             <span>mN</span>
           </div>
-          <div class="range">Range: 0.1mN - 10mN</div>
+          <div class="range">Range: 500gm - 2kg</div>
         </div>
 
         <div class="input-row">
@@ -77,11 +92,25 @@
 
       <button class="primary" id='dis2d' onclick="display2d()">Two-Dimentional View</button>
       <button class="primary" id="indent" onclick="movedown()">Indent</button>
+
+      <button class="primary" id="measureCrackBtn" onclick="openCrackMeasure()" style="display:none;">
+  Measure Crack Length
+</button>
+
       <!-- <button class="primary" id="reset" onclick="moveup('./base2-1.png')">Remove load</button> -->
-       <button class="primary" id="topviewbtn" onclick="crack()">Top View</button>
-       <button  class="primary" id="topindentbtn" onclick="startFrameAnimationOnce()">View Indentation From Top</button>
-      <button class="primary" id="display3d" onclick="display3d()">Three Dimentional View</button>
+       
+       <!-- <button  class="primary" id="topindentbtn" onclick="startFrameAnimationOnce()">View Indentation From Top</button> -->
+      <!-- <button class="primary" id="display3d" onclick="display3d()">Three Dimentional View</button> -->
       <button class="primary" id="formula" onclick="showformula()">Formulae Use</button>
+
+      <button class="primary" id="resultBtn" onclick="showResult()" >
+  Result
+</button>
+
+<button class="primary" id="conclusionBtn" onclick="showConclusion()" >
+  Conclusion
+</button>
+
 
 
 
@@ -301,76 +330,45 @@
   </div>
 
   <!-- Formula Popup -->
-  <div id="formulaModal" class="formula-modal">
-    <div class="formula-box">
+<div id="formulaModal" class="formula-modal">
+  <div class="formula-box">
 
-      <!-- Close Button -->
-      <span class="close-btn" onclick="closeFormula()">✖</span>
+    <span class="close-btn" onclick="closeFormula()">✖</span>
 
-      <h3>Nano-Indentation Formulae</h3>
+    <h3>Fracture Toughness Formula</h3>
 
-      <div class="formula-content">
+    <div class="formula-content">
 
-        <p><b>Contact Depth</b></p>
-        <div class="formula">
-          h<sub><sub>c</sub></sub> = h − ε
-          <span class="frac">
-            <span class="top">P</span>
-            <span class="bottom">S</span>
-          </span>
-        </div>
-        <p>
-          where <b>h</b> is maximum indentation depth,
-          <b>P</b> is maximum load,
-          <b>S</b> is unloading stiffness,
-          <b>ε ≈ 0.75</b> (Berkovich indenter).
-        </p>
-        <hr>
-
-        <p><b>Projected Contact Area</b></p>
-        <div class="formula">
-          A = f(h<sub><sub>c</sub></sub>)
-        </div>
-        <p>
-          Area function depends on indenter geometry.
-        </p>
-
-        <hr>
-
-        <p><b>Hardness</b></p>
-        <div class="formula">
-          H =
-          <span class="frac">
-            <span class="top">P</span>
-            <span class="bottom">A</span>
-          </span>
-        </div>
-        <p>
-          Ratio of maximum load to projected contact area.
-        </p>
-
-        <hr>
-
-        <p><b>Elastic Modulus</b></p>
-        <div class="formula">
-          E =
-          <span class="frac">
-            <span class="top">√π</span>
-            <span class="bottom">2</span>
-          </span>
-          ·
-          <span class="frac">
-            <span class="top">S</span>
-            <span class="bottom">√A</span>
-          </span>
-        </div>
-        <p>
-          Calculated using unloading stiffness method.
-        </p>
-
+      <!-- Main Equation -->
+      <div class="formula-equation-box">
+        K<sub>IC</sub> = 0.016 
+        <span class="frac">
+          <span class="top">(E/H)<sup>1/2</sup></span>
+          <span class="bottom"></span>
+        </span>
+        · 
+        <span class="frac">
+          <span class="top">P</span>
+          <span class="bottom">c<sup>3/2</sup></span>
+        </span>
       </div>
+
+      <br>
+
+      <p><b>Where,</b></p>
+
+      <ul class="formula-list">
+        <li><b>K<sub>IC</sub></b> – fracture toughness (MPa√m)</li>
+        <li><b>E</b> – elastic modulus (GPa)</li>
+        <li><b>H</b> – hardness (GPa)</li>
+        <li><b>P</b> – applied load (N)</li>
+        <li><b>c</b> – crack length from indentation center to crack tip (m)</li>
+        <li><b>0.016</b> – empirical calibration constant</li>
+      </ul>
+
     </div>
   </div>
+</div>
 
 
 
@@ -395,6 +393,212 @@
       </form>
     </div>
   </div> -->
+
+
+
+
+
+
+<!-- RESULT POPUP -->
+<div id="resultModal" class="formula-modal result-modal">
+  <div class="formula-box result-box">
+
+    <span class="close-btn" onclick="closeResult()">✖</span>
+    <h3>Fracture Toughness Results</h3>
+
+    <!-- SLIDES CONTAINER -->
+    <div id="resultSlides" class="result-slides">
+
+      <!-- ========== SLIDE 1: IMAGE ========== -->
+      <div class="slide active">
+  <img src="res.png" class="result-image" alt="SEM Indentation Image">
+
+  <button class="result-next-btn" onclick="nextSlide()">▶ Show Result Table</button>
+</div>
+
+
+      <!-- ========== SLIDE 2: MATERIAL PROPERTIES TABLE ========== -->
+      <div class="slide">
+        <h4>Material Properties Used for Calculation</h4>
+        <table class="result-table">
+          <tr>
+            <th>Property</th>
+            <th>Symbol</th>
+            <th>Typical Value Used</th>
+            <th>Unit</th>
+          </tr>
+          <tr>
+            <td>Elastic modulus</td>
+            <td>E</td>
+            <td>500</td>
+            <td>GPa</td>
+          </tr>
+          <tr>
+            <td>Hardness</td>
+            <td>H</td>
+            <td>25</td>
+            <td>GPa</td>
+          </tr>
+        </table>
+
+        <button class="result-nav-btn back-btn" onclick="prevSlide()">◀ Back</button>
+  <button class="result-nav-btn" onclick="nextSlide()">Next ▶</button>
+      </div>
+
+      <!-- ========== SLIDE 3: CRACK LENGTH TABLE ========== -->
+      <div class="slide">
+        <h4>Measured Crack Lengths & Calculated Toughness</h4>
+        <p class="formula-eqn">K<sub>IC</sub> = 0.016 (E/H)<sup>1/2</sup> · P / c<sup>3/2</sup></p>
+        
+        <table class="result-table">
+          <tr>
+            <th>Crack</th>
+            <th>Crack length c (µm)</th>
+            <th>c (m)</th>
+            <th>K<sub>IC</sub> (MPa√m)</th>
+          </tr>
+          <tr><td>1</td><td>58</td><td>5.8×10⁻⁵</td><td>4.5</td></tr>
+          <tr><td>2</td><td>60</td><td>6.0×10⁻⁵</td><td>4.3</td></tr>
+          <tr><td>3</td><td>59</td><td>5.9×10⁻⁵</td><td>4.4</td></tr>
+          <tr><td>4</td><td>59</td><td>5.9×10⁻⁵</td><td>4.4</td></tr>
+        </table>
+
+       <button class="result-nav-btn back-btn" onclick="prevSlide()">◀ Back</button>
+  <button class="result-nav-btn" onclick="nextSlide()">Next ▶</button>
+      </div>
+
+      <!-- ========== SLIDE 4: FINAL RESULT TABLE ========== -->
+      <div class="slide">
+        <h4>Final Fracture Toughness Result</h4>
+
+        <table class="result-table">
+          <tr>
+            <th>Parameter</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Average crack length c<sub>avg</sub></td>
+            <td>59 µm</td>
+          </tr>
+          <tr>
+            <td>Mean fracture toughness K<sub>IC</sub></td>
+            <td>≈ 4.4 MPa√m</td>
+          </tr>
+        </table>
+
+        <button class="result-nav-btn" onclick="prevSlide()">◀ Back</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- CONCLUSION POPUP -->
+<div id="conclusionModal" class="formula-modal conclusion-modal">
+  <div class="formula-box conclusion-box">
+
+    <span class="close-btn" onclick="closeConclusion()">✖</span>
+    <h3>Conclusion</h3>
+
+    <div class="conclusion-content">
+      <p>
+        The Vickers indentation produced clear and symmetric radial–median cracks at the corners of each
+        impression, allowing accurate crack-length measurement and reliable use of the Anstis equation.
+      </p>
+
+      <p>
+        Using the measured crack lengths (~63–67 µm) along with the elastic modulus and hardness of HfB₂,
+        the average fracture toughness was calculated to be ≈ 3.8 MPa√m, matching expected dense ceramic behavior.
+      </p>
+
+      <p>
+        Since higher fracture toughness suppresses crack initiation and growth under contact loading,
+        the measured K<sub>IC</sub> indicates improved resistance to microcracking and chipping,
+        implying superior wear performance.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- CRACK MEASUREMENT POPUP -->
+<div id="crackMeasureModal" class="formula-modal">
+  <div class="formula-box result-box">
+
+    <span class="close-btn" onclick="closeCrackMeasure()">✖</span>
+    <h3>Crack Length Measurement</h3>
+
+    <!-- SLIDES -->
+    <div id="crackSlides" class="result-slides">
+
+      <!-- ========== SLIDE 0 : IMAGE SEQUENCE ========== -->
+      <div class="slide active" id="crackImgSlide" style="text-align:center;">
+        <img id="crackSeqImg" src="img1.png" class="result-image" 
+             style="width:85%; border:2px solid #777; border-radius:6px;">
+
+        <button class="result-nav-btn" id="crackImgNextBtn" 
+                onclick="openCrackTableSlide()" 
+                style="margin-top:12px; display:none;">
+          ▶ Show Measured Table
+        </button>
+      </div>
+
+      <!-- ========== SLIDE 1 : TABLE ========== -->
+      <div class="slide" id="crackTableSlide">
+        <h4>Measured Crack Lengths & Calculated Toughness</h4>
+
+        <table class="result-table">
+          <tr>
+            <th>Crack</th>
+            <th>Crack length c (µm)</th>
+            <th>c (m)</th>
+            <th>K<sub>IC</sub> (MPa√m)</th>
+          </tr>
+          <tr><td>1</td><td>58</td><td>5.8×10⁻⁵</td><td>4.5</td></tr>
+          <tr><td>2</td><td>60</td><td>6.0×10⁻⁵</td><td>4.3</td></tr>
+          <tr><td>3</td><td>59</td><td>5.9×10⁻⁵</td><td>4.4</td></tr>
+          <tr><td>4</td><td>59</td><td>5.9×10⁻⁵</td><td>4.4</td></tr>
+        </table>
+
+        <button class="result-nav-btn back-btn" onclick="showCrackSlide(0)">◀ Back</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
   <script src="./js/main.js"></script>
 
 

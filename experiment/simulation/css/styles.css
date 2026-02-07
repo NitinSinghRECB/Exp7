@@ -626,11 +626,12 @@ height: 70%;
 }
 .crack .img img{
   
-  height: 75%;
+  height: auto;
   display: block;
     object-fit: contain;
-  width: 85%;
-  height: auto;
+  width: 90%;
+  transform: scale(1.9);   /* 2 = double size */
+  
   image-rendering: auto;
   will-change: contents;
 }
